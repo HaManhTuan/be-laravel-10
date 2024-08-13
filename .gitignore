@@ -1,0 +1,27 @@
+/node_modules
+/public/hot
+/public/storage
+/public/db.php
+/storage/*.key
+/composer
+/vendor
+.env
+.env.testing
+.env.backup
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+.rnd
+supervisord.pid
+xdebug.log
+
+# Code Style Cache
+.php_cs.cache
+.mysql
+
+

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+    php:
+        image: "${APP_NAME}_${APP_ENV}_php"
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                - "APP_DEBUG=${APP_DEBUG}"
+                - "APP_ENV=${APP_ENV}"
+        container_name: "${APP_NAME}_${APP_ENV}_php"
+        restart: always
+        environment:
+            - "XDG_CONFIG_HOME=/var/www"
+        volumes:
+            - "./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini"
+            - "./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
+            - "./:/var/www"
+        ports:
+            - ${API_PORT}:80
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        depends_on:
+            - db
+        networks:
+            web_net:
+
+    db:
+        image: mysql:8.0.30
+        # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+        # (this is just an example, not intended to be a production configuration)
+        command: --default-authentication-plugin=mysql_native_password
+        container_name: "${APP_NAME}_${APP_ENV}_db"
+        restart: always
+        environment:
+            - "MYSQL_ROOT_PASSWORD=${DB_PASSWORD}"
+            - "MYSQL_DATABASE=${DB_DATABASE}"
+        ports:
+            - "${DB_PORT}:3306"
+        volumes:
+            - ".mysql:/var/lib/mysql"
+            - "./docker/mysql/my.cnf:/etc/mysql/my.cnf"
+        networks:
+            web_net:
+
+networks:
+    web_net:
